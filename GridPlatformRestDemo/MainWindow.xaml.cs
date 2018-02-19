@@ -30,17 +30,21 @@ namespace GridPlatformRestDemo
 
         private async void Submit(object sender, RoutedEventArgs e)
         {
-            try
+            using (var client = new HttpClient())
             {
-                using (var client = new HttpClient())
+                try
                 {
-                    client.DefaultRequestHeaders.Add("Authorization", $"token {TokenTextBox.Text}");
+                    client.DefaultRequestHeaders.Accept.Add(
+                        new MediaTypeWithQualityHeaderValue("application/json"));
+                    client.DefaultRequestHeaders.Add("User-Agent", "GridPlatform REST Demo");
+                    client.DefaultRequestHeaders.Add("Authorization", $"Token {TokenTextBox.Text}");
                     ResponseTextBox.Text = await client.GetStringAsync(UrlTextBox.Text);
                 }
-            }
-            catch (Exception exception)
-            {
-                ResponseTextBox.Text = exception.ToString();
+
+                catch (Exception exception)
+                {
+                    ResponseTextBox.Text = exception.ToString();
+                }
             }
         }
     }
